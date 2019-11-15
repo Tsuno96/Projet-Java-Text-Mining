@@ -1,0 +1,68 @@
+CREATE OR REPLACE FUNCTION public.td5()
+ RETURNS void
+ LANGUAGE plpgsql
+AS $function$
+-- On declare les variables 
+declare 
+
+	nuplet meta%ROWTYPE;
+	pname varchar;
+	pprice numeric;
+	device varchar;
+	price varchar;
+	pid numeric :=0;
+	curseur REFCURSOR;
+
+begin 
+	-- Detruit, si la table exsite
+	execute 'drop table if exists c_all';
+
+	-- Recréer la table C_ALL
+	execute ' CREATE table c_all(
+			 pid numeric Primary key,
+			 pname Varchar(100),
+			 pprice numeric(7,2)
+			 )';
+	--Obtenir les noms des catalogues 
+	for nuplet in select table_name, trans_code from meta
+	
+	-- Recupere les noms des attributs qui contiennent name et price. 
+		-- Donc dans l'idee est de trouver les caracters qui contient "nom" et "price" dans les noms de colone.
+		-- On voit que le catalogue C2 contient des caracteres en majuscules donc il faut le mettre en minuscule pour que tout soit pareil.
+	loop
+	EXECUTE 'SELECT column_name 
+			 FROM INFORMATION_SCHEMA.columns 
+             WHERE column_name LIKE''%name%'' AND table_name=LOWER('''||nuplet.table_name||''')' INTO device;
+            
+    EXECUTE 'SELECT column_name 
+			 FROM INFORMATION_SCHEMA.columns 
+			 WHERE column_name LIKE''%price%'' AND table_name=LOWER('''||nuplet.table_name||''')' INTO price;
+	-- Charger les données dans C_all
+		-- Donc on va utiliser curseur
+		open curseur for execute 'select '||device||','||price||' from '||nuplet.table_name||'';
+        fetch curseur into pname,pprice;  
+        while found
+  LOOP
+            pid:=pid+1; 
+	
+            -- si le code de transformation CAP -> majuscule 
+            if nuplet.trans_code like('%CAP%') then
+               pname:=upper(pname);
+              end if;
+             
+            -- si le code de transformation CUR -> 1e = 1,15 dollar
+             if nuplet.trans_code like('%CUR%') then
+      		  pprice:= pprice/1.15;
+      		 end if;
+      		
+      		execute 'INSERT INTO c_all VALUES ('||pid||','''||pname||''','||pprice||') ';  
+      	
+          fetch curseur into pname,pprice; 
+        end loop;
+        close curseur;
+
+	end loop;
+	return;
+end
+$function$
+;
