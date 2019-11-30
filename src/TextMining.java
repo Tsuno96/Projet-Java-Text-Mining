@@ -1,37 +1,44 @@
+// Java Program to illustrate reading from
+// FileReader using FileReader
 
-import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.paint.Color;
-import javafx.stage.Stage;
+import java.io.*;
+import java.util.*;
 
-public class TextMining extends Application {
+public class TextMining {
+    public static void main(String[] args) throws Exception {
+        // Importation de text
+        FileReader foot =
+                new FileReader(".\\data\\Foot.txt");
+        BufferedReader tampon = new BufferedReader(foot);
 
-    public static void main(String[] args) {
-        Application.launch(TextMining.class, args);
+        LineNumberReader count = new LineNumberReader(foot);
+
+
+        //Liste des lignes
+        List<String> lstStrLignes = stock(tampon);
+
+        System.out.println(lstStrLignes.get(10));
+
+        // Afficher le nombre de ligneù
+        int result = 0;
+        while (count.skip(Long.MAX_VALUE) > 0) {
+            result = count.getLineNumber() + 1; //Comme le 1er ligne = 0
+        }
+
+        System.out.println(result);
+
+
+
     }
 
-    @Override
-    public void start(Stage primaryStage) {
-        primaryStage.setTitle("Hello World");
-        Group root = new Group();
-        Scene scene = new Scene(root, 300, 250, Color.LIGHTGREEN);
-        Button btn = new Button();
-        btn.setLayoutX(100);
-        btn.setLayoutY(80);
-        btn.setText("Hello World");
-        btn.setOnAction(new EventHandler<ActionEvent>() {
-
-            public void handle(ActionEvent event) {
-                System.out.println("Hello World");
-            }
-        });
-        root.getChildren().add(btn);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+    public static List<String> stock (BufferedReader br) throws IOException {
+        List<String> lstStr = new ArrayList<String>();
+        String str;
+        while (( str = br.readLine()) != null) {
+            lstStr.add(str);
+        }
+        return lstStr;
     }
+
 }
 
