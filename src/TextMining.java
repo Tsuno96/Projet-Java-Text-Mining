@@ -1,37 +1,43 @@
+// Java Program to illustrate reading from
+// FileReader using FileReader
+import java.io.*;
+    public class TextMining
+    {
+        public static void main(String[] args) throws Exception
+        {
+            // Importation de text
+            FileReader foot =
+                    new FileReader("H:\\Java\\Projet\\Foot.txt");
+            BufferedReader tampon = new BufferedReader(foot);
 
-import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.paint.Color;
-import javafx.stage.Stage;
+            LineNumberReader count = new LineNumberReader(foot);
 
-public class TextMining extends Application {
+            // Afficher le 1er ligne
+            String ligne = tampon.readLine();
+            // Afficher le n-eme ligne
 
-    public static void main(String[] args) {
-        Application.launch(TextMining.class, args);
-    }
 
-    @Override
-    public void start(Stage primaryStage) {
-        primaryStage.setTitle("Hello World");
-        Group root = new Group();
-        Scene scene = new Scene(root, 300, 250, Color.LIGHTGREEN);
-        Button btn = new Button();
-        btn.setLayoutX(100);
-        btn.setLayoutY(80);
-        btn.setText("Hello World");
-        btn.setOnAction(new EventHandler<ActionEvent>() {
-
-            public void handle(ActionEvent event) {
-                System.out.println("Hello World");
+            // Afficher le nombre de ligneù
+            int result = 0;
+            while(count.skip(Long.MAX_VALUE)>0) {
+                result = count.getLineNumber() +1; //Comme le 1er ligne = 0
             }
-        });
-        root.getChildren().add(btn);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+
+            System.out.println(result);
+            System.out.println(ligne);
+            String lol = getRandomLineFromTheFile(tampon);
+            System.out.println(lol);
+
+        }
+        public String getRandomLineFromTheFile(File file)
+        {
+            final RandomAccessFile f = new RandomAccessFile(file, "r");
+            final long randomLocation = (long) (Math.random() * f.length());
+            f.seek(randomLocation);
+            f.readLine();
+            return f.readLine();
+        }
+
+
     }
-}
 
