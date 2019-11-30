@@ -7,7 +7,7 @@ import java.io.*;
         {
             // Importation de text
             FileReader foot =
-                    new FileReader("H:\\Java\\Projet\\Foot.txt");
+                    new FileReader(".\\data\\Foot.txt");
             BufferedReader tampon = new BufferedReader(foot);
 
             LineNumberReader count = new LineNumberReader(foot);
@@ -25,18 +25,9 @@ import java.io.*;
 
             System.out.println(result);
             System.out.println(ligne);
-            String lol = getRandomLineFromTheFile(tampon);
-            System.out.println(lol);
 
         }
-        public String getRandomLineFromTheFile(File file)
-        {
-            final RandomAccessFile f = new RandomAccessFile(file, "r");
-            final long randomLocation = (long) (Math.random() * f.length());
-            f.seek(randomLocation);
-            f.readLine();
-            return f.readLine();
-        }
+
 
 
     }
