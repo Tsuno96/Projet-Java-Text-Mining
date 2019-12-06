@@ -1,10 +1,13 @@
 // Java Program to illustrate reading from
 // FileReader using FileReader
 
+import javax.sound.midi.Synthesizer;
 import java.io.*;
 import java.util.*;
 
 public class TextMining {
+    public static BaseDeTweets bdt = new BaseDeTweets();
+
     public static void main(String[] args) throws Exception {
         // Importation de text
         FileReader foot =
@@ -17,26 +20,27 @@ public class TextMining {
         //Liste des lignes
         List<String> lstStrLignes = stock(tampon);
 
-        //System.out.println(lstStrLignes.get(0));
+        //bdt.ajoute(new Tweets(lstStrLignes.get(0)));
+        //bdt.ajoute(new Tweets(lstStrLignes.get(1)));
+
+        for(int i = 0; i<lstStrLignes.size();i++)
+        {
+            //System.out.println(i);
+            Tweets t = new Tweets(lstStrLignes.get(i));
+            bdt.ajoute(t);
+        }
+        bdt.trierParText();
+        bdt.afficher();
+
 
         // Afficher le nombre de ligne
         int result = 0;
         while (count.skip(Long.MAX_VALUE) > 0) {
             result = count.getLineNumber() + 1; //Comme le 1er ligne = 0
         }
-        System.out.println(result);
-
-        /// Separer les champs
-        Tweets Tweet1 = new Tweets(lstStrLignes.get(1));
 
 
-        // values[1] = Utilisateur
-        // values[2] = Date et temps avec date=datetime[0] et temp=datetime[2]
-        // values[3] = Tweet + https=http[]
-        // values[4] = Utilisateur retweet
 
-
-        System.out.println(Tweet1);
         int Utilisateur[ ] = new int[10];
 
         //for (String i: http) {

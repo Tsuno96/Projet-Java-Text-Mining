@@ -1,37 +1,46 @@
 public class Tweets {
 
-    String strUtilisateur;
-    String strDate;
-    String strTime;
-    String strText;
-    Boolean bRT;
-    Boolean bLinked;
-    String[] arrstrLiens;
-    String strUtilisateurRT;
+    private String strUtilisateur;
+    private String strDate;
+    private String strTime;
+    private String strText;
+
+    public Boolean getbRT() {
+        return bRT;
+    }
+
+    private Boolean bRT;
+
+    private Boolean bValide;
+    private String strUtilisateurRT;
+
+    private int nNbRT = 0;
+
+    private Tweets twOriginal;
 
     public Tweets(String chaine)
     {
-        bRT = false;
-        bLinked = false;
+
+
+        ///séparer les champs
         String values[] = chaine.split("\t");
-        strUtilisateur = values[1];
-        strDate = values[2].split(" ")[0];
-        strTime = values[2].split(" ")[1];
-        if(values[3].contains("https://"))
-        {
-            bLinked = true;
-            strText = values[3].substring(0, values[3].indexOf("https://")-1);
-            arrstrLiens = values[3].substring(values[3].indexOf("https://")).split(" ");
+        if (values.length >=3) {
+            bValide = true;
+            bRT = false;
+            strUtilisateur = values[1];
+            strDate = values[2].split(" ")[0];
+            strTime = values[2].split(" ")[1];
+
+            strText = values[3];
+
+            if (values.length > 4) {
+                bRT = true;
+                strUtilisateurRT = values[4];
+            }
         }
         else
         {
-            strText = values[3];
-        }
-
-        if(values.length >4)
-        {
-            bRT = true;
-            strUtilisateurRT = values[4];
+            bValide = false;
         }
     }
 
@@ -41,17 +50,30 @@ public class Tweets {
                 +"\nDate : "+strDate
                 +"\nTemps : "+strTime
                 +"\nText : "+strText
+                +"\nRT : "+nNbRT
                 );
-        if(bLinked) {
-            strTweet += new String("\n Liens : ");
-            for (String str : arrstrLiens) {
-                strTweet += new String("\n" + str);
-            }
-        }
+
         if(bRT)
         {
             strTweet += new String("\nUtilisateur Retweeté : "+strUtilisateurRT);
         }
         return strTweet;
     }
+
+    public String getStrUtilisateur() {
+        return strUtilisateur;
+    }
+
+    public String getStrText() {
+        return strText;
+    }
+
+    public Boolean getbValide() {
+        return bValide;
+    }
+
+    public void addRT() {
+        this.nNbRT +=1;
+    }
+
 }
