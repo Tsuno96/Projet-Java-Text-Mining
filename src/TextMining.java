@@ -27,16 +27,16 @@ public class TextMining {
         System.out.println(result);
 
         /// Separer les champs
+        Tweets Tweet1 = new Tweets(lstStrLignes.get(1));
 
-        String chaine = lstStrLignes.get(2);
-        String values[] = chaine.split("\t");
-        String datetime[]   = values[2].split(" ");
-        String http = values[3].substring(values[3].indexOf("https://"));
+
         // values[1] = Utilisateur
         // values[2] = Date et temps avec date=datetime[0] et temp=datetime[2]
         // values[3] = Tweet + https=http[]
         // values[4] = Utilisateur retweet
-        System.out.println(http);
+
+
+        System.out.println(Tweet1);
         int Utilisateur[ ] = new int[10];
 
         //for (String i: http) {
