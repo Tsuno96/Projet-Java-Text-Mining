@@ -3,8 +3,8 @@ import java.util.*;
 public class BaseDeTweets {
 
     //private TreeMap<Tweets, Integer> tmTweets;
-    private List<Tweets> lstTweets;
 
+    private List<Tweets> lstTweets;
     public BaseDeTweets() {
         //tmTweets = new TreeMap<Tweets, Integer>();
         lstTweets = new ArrayList<Tweets>();
@@ -45,6 +45,10 @@ public class BaseDeTweets {
             }
 
         }
+    }
+
+    public List<Tweets> getTweets() {
+        return lstTweets;
     }
 
 

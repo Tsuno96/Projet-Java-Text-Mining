@@ -5,22 +5,17 @@ public class Tweets {
     private String strTime;
     private String strText;
 
-    public Boolean getbRT() {
-        return bRT;
-    }
+    private boolean bRT;
 
-    private Boolean bRT;
+    private boolean bValide;
 
-    private Boolean bValide;
     private String strUtilisateurRT;
-
     private int nNbRT = 0;
 
     private Tweets twOriginal;
 
     public Tweets(String chaine)
     {
-
 
         ///séparer les champs
         String values[] = chaine.split("\t");
@@ -74,6 +69,25 @@ public class Tweets {
 
     public void addRT() {
         this.nNbRT +=1;
+    }
+
+    public String getStrTime() {
+        return strTime;
+    }
+    public String getStrUtilisateurRT() {
+        return strUtilisateurRT;
+    }
+
+    public int getnNbRT() {
+        return nNbRT;
+    }
+
+    public String getStrDate() {
+        return strDate;
+    }
+
+    public Boolean getbRT() {
+        return bRT;
     }
 
 }
