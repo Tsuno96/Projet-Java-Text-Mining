@@ -9,7 +9,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -17,11 +16,18 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import org.mcavallo.opencloud.Cloud;
+import org.mcavallo.opencloud.Tag;
 
-import java.io.*;
-import java.util.*;
+import javax.swing.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class TextMining extends Application {
     public static BaseDeTweets bdt = new BaseDeTweets();
@@ -38,6 +44,8 @@ public class TextMining extends Application {
         }
         return lstStr;
     }
+
+
 
     /**
      * The main entry point for all JavaFX applications.
@@ -58,7 +66,7 @@ public class TextMining extends Application {
     public void start(Stage primaryStage) throws Exception {
         // Importation de text
         FileReader foot =
-                new FileReader(".\\data\\climat.txt");
+                new FileReader(".\\data\\Foot.txt");
         BufferedReader tampon = new BufferedReader(foot);
         LineNumberReader count = new LineNumberReader(foot);
         //Liste des lignes
@@ -140,6 +148,7 @@ public class TextMining extends Application {
 
 
 
+
         primaryStage.setTitle("TextMining");
 
         HBox hBox = new HBox(choiceBox, textField);
@@ -154,9 +163,47 @@ public class TextMining extends Application {
         table.prefWidthProperty().bind(primaryStage.widthProperty());
 
         root.getChildren().addAll(label,table, hBox, allLabel);
-
         primaryStage.setScene(scene);
         primaryStage.show();
+
+
+
+        List<String> WORDS = new ArrayList<>();
+
+        for(Tweets t: bdt.getTweets())
+        {
+            String[] twords = t.getStrText().split(" ");
+            for(String s : twords)
+            {
+                WORDS.add(s);
+            }
+
+        }
+
+
+        JFrame frame = new JFrame(TextMining.class.getSimpleName());
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        JPanel panel = new JPanel();
+        Cloud cloud = new Cloud();
+        Random random = new Random();
+        for (String s : WORDS) {
+            for (int i = random.nextInt(50); i > 0; i--) {
+                cloud.addTag(s);
+            }
+        }
+        for (Tag tag : cloud.tags()) {
+            final JLabel jlabel = new JLabel(tag.getName());
+            jlabel.setOpaque(false);
+            jlabel.setFont(jlabel.getFont().deriveFont((float) tag.getWeight() * 100));
+            panel.add(jlabel);
+        }
+
+        frame.add(panel);
+        frame.setSize(800, 600);
+        frame.setVisible(true);
+
+
+
     }
 }
 
