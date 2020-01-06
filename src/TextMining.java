@@ -20,28 +20,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field.Store;
-import org.apache.lucene.document.StringField;
-import org.apache.lucene.document.TextField;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.misc.HighFreqTerms;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 
 public class TextMining extends Application {
@@ -205,15 +189,36 @@ public class TextMining extends Application {
             String[] twords = t.getStrText().replaceAll("[^A-Za-z]+", " ").split(" ");
             for(String s : twords)
             {
-                lstWords.add(s);
+                if (s.length() > 1) {
+                    lstWords.add(s);
+                }
             }
+        }
 
+        lowerCase(lstWords);
+        lstWords.removeAll(lstSW);
+
+        Set<String> uniqueWords = new TreeSet<>(lstWords);
+
+        List<Words> infoWords = new ArrayList<>();
+
+        for (String str : uniqueWords)
+        {
+            int c = count(lstWords,str);
+            infoWords.add(new Words(str, c, 0,0,0));
+
+        }
+
+        Collections.sort(infoWords, new CountComparator());
+
+        for (Words w: infoWords)
+        {
+            System.out.println(w.getText()+" " + w.getCount());
         }
 
 
 
-        lowerCase(lstWords);
-        lstWords.removeAll(lstSW);
+
 
         /*for (String w : lstWords)
         {
@@ -224,34 +229,13 @@ public class TextMining extends Application {
                 }
             }
         }*/
-        
-        index(lstWords);
-        count();
-
-
-        /*JFrame frame = new JFrame(TextMining.class.getSimpleName());
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        JPanel panel = new JPanel();
-        Cloud cloud = new Cloud();
-        Random random = new Random();
-        for (String s : textTweets) {
-            for (int i = random.nextInt(50); i > 0; i--) {
-                cloud.addTag(s);
-            }
-        }
-        for (Tag tag : cloud.tags()) {
-            final JLabel jlabel = new JLabel(tag.getName());
-            jlabel.setOpaque(false);
-            jlabel.setFont(jlabel.getFont().deriveFont((float) tag.getWeight() * 100));
-            panel.add(jlabel);
-        }
 
 
 
-        frame.add(panel);
-        frame.setSize(800, 600);
-        frame.setVisible(true);*/
+
     }
+
+
 
     public static void lowerCase(List<String> strings)
     {
@@ -261,47 +245,20 @@ public class TextMining extends Application {
             iterator.set(iterator.next().toLowerCase());
         }
     }
-    final static String index = "index";
-    final static String field = "text";
 
-    public static void index(List<String> lines) {
-        try {
-            Directory dir = FSDirectory.open(Paths.get(index));
-            Analyzer analyzer = new StandardAnalyzer();
-            IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
-            iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
-            IndexWriter writer = new IndexWriter(dir, iwc);
-            for (int i = 0; i < lines.size(); i++) {
-                String line = lines.get(i);
+    public static int count(List<String> words,String term)
+    {
+        int count = 0;
 
-                    Document doc = new Document();
-                    doc.add(new StringField("id", "" + i, Store.YES));
-                    doc.add(new TextField(field, line.trim(), Store.YES));
-                    writer.addDocument(doc);
-
-            }
-
-            System.out.println("indexed " + lines.size() + " sentences");
-            writer.close();
-        } catch (IOException e) {
-            System.out.println(" caught a " + e.getClass() + "\n with message: " + e.getMessage());
+        for (String word : words) {
+            if (term.equalsIgnoreCase(word))
+                count++;
         }
+
+        return count;
     }
 
-    public static void count() {
-        try {
-            IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(index)));
-            int numTerms = 100;
-            org.apache.lucene.misc.TermStats[] stats = HighFreqTerms.getHighFreqTerms(reader, numTerms, field, new HighFreqTerms.DocFreqComparator());
-            for (org.apache.lucene.misc.TermStats termStats : stats) {
-                String termText = termStats.termtext.utf8ToString();
-                System.out.println(termText + " " + termStats.docFreq);
-            }
-            reader.close();
-        } catch (Exception e) {
-            System.out.println(" caught a " + e.getClass() + "\n with message: " + e.getMessage());
-        }
-    }
+
 
 
 
