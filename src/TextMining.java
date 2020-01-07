@@ -8,12 +8,10 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -88,6 +86,8 @@ public class TextMining extends Application {
         }
         bdt.trierParText();
 
+        //Collections.sort(bdt.getTweets(), new SortByRt());
+
         //Creation du tableau de données
         TableView<Tweets> table = new TableView<>();
         final ObservableList<Tweets> data =
@@ -96,6 +96,7 @@ public class TextMining extends Application {
         final Label label = new Label("Tweets");
         label.setFont(new Font("Arial", 20));
         table.setEditable(true);
+
 
         TableColumn userCol = new TableColumn("Utilisateur");
         userCol.setCellValueFactory(
@@ -126,9 +127,12 @@ public class TextMining extends Application {
                 new PropertyValueFactory<Tweets, String>("strText"));
 
 
-
         FilteredList<Tweets> flTweets= new FilteredList(data, p -> true);//Pass the data to a filtered list
-        table.setItems(flTweets);//Set the table's items using the filtered list
+        SortedList<Tweets> sortedTweets = new SortedList<>(flTweets);
+        sortedTweets.comparatorProperty().bind(table.comparatorProperty());
+
+        table.setItems(sortedTweets);//Set the table's items using the filtered list
+
         table.getColumns().addAll(userCol, dateCol, rtCol, brtCol, userRTCol, timeCol, textCol);
 
 
@@ -136,7 +140,7 @@ public class TextMining extends Application {
         ChoiceBox<String> choiceBox = new ChoiceBox();
         choiceBox.getItems().addAll("Utilisateur", "Contenu du tweet");
         choiceBox.setValue("Utilisateur");
-        javafx.scene.control.TextField textField = new javafx.scene.control.TextField();
+        TextField textField = new javafx.scene.control.TextField();
         textField.setPromptText("Search here!");
         textField.setOnKeyReleased(keyEvent ->
         {
@@ -215,27 +219,7 @@ public class TextMining extends Application {
         {
             System.out.println(w.getText()+" " + w.getCount());
         }
-
-
-
-
-
-        /*for (String w : lstWords)
-        {
-            if(lstSW.contains(w.toLowerCase())){
-                while (lstWords.indexOf(w)!=-1)
-                {
-                    lstWords.remove(w);
-                }
-            }
-        }*/
-
-
-
-
     }
-
-
 
     public static void lowerCase(List<String> strings)
     {
@@ -257,10 +241,6 @@ public class TextMining extends Application {
 
         return count;
     }
-
-
-
-
 
 
 }
