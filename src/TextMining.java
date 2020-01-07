@@ -22,7 +22,6 @@ import javafx.stage.Stage;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.LineNumberReader;
 import java.util.*;
 
 
@@ -71,10 +70,10 @@ public class TextMining extends Application {
 
 
         // Importation des données
-        FileReader foot =
-                new FileReader(".\\data\\FootLight.txt");
-        BufferedReader tampon = new BufferedReader(foot);
-        LineNumberReader count = new LineNumberReader(foot);
+        FileReader fr =
+                new FileReader(".\\data\\Foot.txt");
+        BufferedReader tampon = new BufferedReader(fr);
+
 
         //Liste des lignes
         List<String> lstStrLignes = stock(tampon);
@@ -171,54 +170,68 @@ public class TextMining extends Application {
 
         Scene scene = new Scene(root, 1000, 700, Color.WHITE);
 
-        table.prefHeightProperty().bind(primaryStage.heightProperty());
-        table.prefWidthProperty().bind(primaryStage.widthProperty());
-
-        root.getChildren().addAll(label,table, hBox, allLabel);
-        primaryStage.setScene(scene);
-        primaryStage.show();
 
 
 
-        List<String> lstWords = new ArrayList<>();
+        List<String> lstStrWords = new ArrayList<>();
+
         List<String> textTweets = new ArrayList<>();
-
         for(Tweets t: bdt.getTweets())
         {
             textTweets.add(t.getStrText());
         }
 
+
+        System.out.println("ProgressBar Spliting Tweets :");
+        double pourcentage = 0;
         for(Tweets t: bdt.getTweets())
         {
+            double it =  bdt.getTweets().indexOf(t) +1 ;
+            if (pourcentage != Math.round((it / bdt.getTweets().size()) * 100))
+            {
+                pourcentage = Math.round((it / bdt.getTweets().size()) * 100);
+                String progress = new String(pourcentage+"% ");
+                System.out.print(progress);
+            }
+
             String[] twords = t.getStrText().replaceAll("[^A-Za-z]+", " ").split(" ");
             for(String s : twords)
             {
                 if (s.length() > 1) {
-                    lstWords.add(s);
+                    lstStrWords.add(s.toLowerCase());
                 }
             }
         }
 
-        lowerCase(lstWords);
-        lstWords.removeAll(lstSW);
 
-        Set<String> uniqueWords = new TreeSet<>(lstWords);
+        //lowerCase(lstWords);
+        lstStrWords.removeAll(lstSW);
+        Set<String> uniqueWords = new TreeSet<>(lstStrWords);
 
         List<Words> infoWords = new ArrayList<>();
 
-        for (String str : uniqueWords)
+        Map<String, Integer> frequencyWords = countFrequencies(lstStrWords);
+
+        for (Map.Entry me : frequencyWords.entrySet())
         {
-            int c = count(lstWords,str);
-            infoWords.add(new Words(str, c, 0,0,0));
+            infoWords.add(new Words(me.getKey().toString(),(Integer)me.getValue(),0,0,0));
 
         }
 
         Collections.sort(infoWords, new CountComparator());
 
-        for (Words w: infoWords)
+        System.out.println("\n");
+        for (int i = 0; i<=10;i++)
         {
-            System.out.println(w.getText()+" " + w.getCount());
+            System.out.println(infoWords.get(i).getText()+" " + infoWords.get(i).getCount());
         }
+
+        table.prefHeightProperty().bind(primaryStage.heightProperty());
+        table.prefWidthProperty().bind(primaryStage.widthProperty());
+        root.getChildren().addAll(label,table, hBox, allLabel);
+        primaryStage.setScene(scene);
+
+        primaryStage.show();
     }
 
     public static void lowerCase(List<String> strings)
@@ -233,15 +246,32 @@ public class TextMining extends Application {
     public static int count(List<String> words,String term)
     {
         int count = 0;
+        int idterm = words.indexOf(term);
 
-        for (String word : words) {
-            if (term.equalsIgnoreCase(word))
-                count++;
+        for (int i = idterm; term.equalsIgnoreCase(words.get(i));i++)
+        {
+            count++;
+            if (i+1 == words.size())
+            {
+                break;
+            }
         }
 
         return count;
     }
 
+    public static Map countFrequencies(List<String> list)
+    {
+        // hashmap to store the frequency of element
+        Map<String, Integer> hm = new HashMap<String, Integer>();
+
+        for (String i : list) {
+            Integer j = hm.get(i);
+            hm.put(i, (j == null) ? 1 : j + 1);
+        }
+
+        return hm;
+    }
 
 }
 
