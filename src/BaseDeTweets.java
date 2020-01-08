@@ -28,8 +28,15 @@ public class BaseDeTweets {
 
     public void trierParText() {
         Collections.sort(lstTweets, new SortByText());
-        compteurRT();
     }
+
+    public void trierParUser() {
+        Collections.sort(lstTweets, new SortByUser());
+    }
+    public void trierParRT() {
+        Collections.sort(lstTweets, new SortByRt());
+    }
+
 
     public void compteurRT() {
         Tweets t0 = lstTweets.get(0);
@@ -37,10 +44,11 @@ public class BaseDeTweets {
             if (lstTweets.get(i).getStrText().contains(t0.getStrText())) {
                 if (lstTweets.get(i).getbRT()) {
                     t0.addRT();
+                } else {
+                    {
+                        t0 = lstTweets.get(i);
+                    }
                 }
-                else {{
-                    t0 = lstTweets.get(i);
-                }}
             } else {
                 t0 = lstTweets.get(i);
             }

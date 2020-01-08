@@ -12,14 +12,11 @@ public class Tweets {
     private String strUtilisateurRT;
     private int nNbRT = 0;
 
-    private Tweets twOriginal;
-
-    public Tweets(String chaine)
-    {
+    public Tweets(String chaine) {
 
         ///séparer les champs
         String values[] = chaine.split("\t");
-        if (values.length >=3) {
+        if (values.length >= 3) {
             bValide = true;
             bRT = false;
             strUtilisateur = values[1];
@@ -32,25 +29,22 @@ public class Tweets {
                 bRT = true;
                 strUtilisateurRT = values[4];
             }
-        }
-        else
-        {
+        } else {
             bValide = false;
         }
     }
 
     @Override
     public String toString() {
-        String strTweet= new String("Utilisateur : " +strUtilisateur
-                +"\nDate : "+strDate
-                +"\nTemps : "+strTime
-                +"\nText : "+strText
-                +"\nRT : "+nNbRT
-                );
+        String strTweet = new String("Utilisateur : " + strUtilisateur
+                + "\nDate : " + strDate
+                + "\nTemps : " + strTime
+                + "\nText : " + strText
+                + "\nRT : " + nNbRT
+        );
 
-        if(bRT)
-        {
-            strTweet += new String("\nUtilisateur Retweeté : "+strUtilisateurRT);
+        if (bRT) {
+            strTweet += new String("\nUtilisateur Retweeté : " + strUtilisateurRT);
         }
         return strTweet;
     }
@@ -68,12 +62,13 @@ public class Tweets {
     }
 
     public void addRT() {
-        this.nNbRT +=1;
+        this.nNbRT += 1;
     }
 
     public String getStrTime() {
         return strTime;
     }
+
     public String getStrUtilisateurRT() {
         return strUtilisateurRT;
     }

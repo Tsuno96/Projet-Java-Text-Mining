@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="577.6190476190476" y="1312.5">TextMining</node>
+    <node x="487.1190476190476" y="656.0">SortByUser</node>
+    <node x="693.1190476190476" y="656.0">SortByText</node>
+    <node x="0.0" y="1041.0">CountComparator</node>
+    <node x="979.8333333333335" y="897.5">javafx.application.Application</node>
+    <node x="764.4553049289891" y="0.0">Tweets</node>
+    <node x="93.33333333333326" y="512.5">Words</node>
+    <node x="281.1190476190476" y="656.0">SortByRt</node>
+    <node x="112.72431077694239" y="0.5">java.util.Comparator</node>
+    <node x="681.7053049289891" y="963.5">BaseDeTweets</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="TextMining" target="BaseDeTweets">
+      <point x="0.0" y="-134.5" />
+      <point x="828.6190476190476" y="1292.5" />
+      <point x="809.2053049289891" y="1292.5" />
+      <point x="42.5" y="101.5" />
+    </edge>
+    <edge source="TextMining" target="Tweets">
+      <point x="55.7777777777778" y="-134.5" />
+      <point x="884.3968253968254" y="1282.5" />
+      <point x="938.3333333333334" y="1282.5" />
+      <point x="938.3333333333334" y="472.5" />
+      <point x="902.7410192147033" y="472.5" />
+      <point x="50.28571428571419" y="211.5" />
+    </edge>
+    <edge source="TextMining" target="Words">
+      <point x="-167.33333333333326" y="-134.5" />
+      <point x="661.2857142857143" y="1282.5" />
+      <point x="194.5" y="1282.5" />
+      <point x="194.5" y="877.5" />
+      <point x="173.33333333333326" y="877.5" />
+      <point x="0.0" y="167.5" />
+    </edge>
+    <edge source="CountComparator" target="Words">
+      <point x="46.0" y="-24.0" />
+      <point x="138.0" y="877.5" />
+      <point x="119.99999999999994" y="877.5" />
+      <point x="-53.333333333333314" y="167.5" />
+    </edge>
+    <edge source="javafx.application.Application" target="javafx.application.Application">
+      <point x="-101.33333333333331" y="167.5" />
+      <point x="1030.5" y="1252.5" />
+      <point x="959.8333333333335" y="1252.5" />
+      <point x="959.8333333333335" y="1065.0" />
+      <point x="-152.0" y="-0.0" />
+    </edge>
+    <edge source="TextMining" target="javafx.application.Application">
+      <point x="223.1111111111111" y="-134.5" />
+      <point x="1051.7301587301586" y="1292.5" />
+      <point x="1233.1666666666667" y="1292.5" />
+      <point x="101.33333333333331" y="167.5" />
+    </edge>
+    <edge source="SortByUser" target="Tweets">
+      <point x="46.5" y="-24.0" />
+      <point x="626.6190476190476" y="492.5" />
+      <point x="802.1695906432749" y="492.5" />
+      <point x="-50.28571428571422" y="211.5" />
+    </edge>
+    <edge source="BaseDeTweets" target="SortByRt">
+      <point x="-68.0" y="-101.5" />
+      <point x="698.7053049289891" y="877.5" />
+      <point x="374.1190476190476" y="877.5" />
+      <point x="0.0" y="24.0" />
+    </edge>
+    <edge source="SortByRt" target="java.util.Comparator">
+      <point x="-46.5" y="-24.0" />
+      <point x="327.6190476190476" y="492.5" />
+      <point x="377.7243107769424" y="492.5" />
+      <point x="0.0" y="211.0" />
+    </edge>
+    <edge source="BaseDeTweets" target="Tweets">
+      <point x="34.0" y="-101.5" />
+      <point x="800.7053049289891" y="867.5" />
+      <point x="916.3333333333334" y="867.5" />
+      <point x="916.3333333333334" y="492.5" />
+      <point x="852.4553049289891" y="492.5" />
+      <point x="0.0" y="211.5" />
+    </edge>
+    <edge source="SortByRt" target="Tweets">
+      <point x="46.5" y="-24.0" />
+      <point x="420.6190476190476" y="482.5" />
+      <point x="777.0267335004178" y="482.5" />
+      <point x="-75.42857142857133" y="211.5" />
+    </edge>
+    <edge source="java.util.Comparator" target="java.util.Comparator">
+      <point x="-212.0" y="211.0" />
+      <point x="165.7243107769424" y="442.5" />
+      <point x="92.72431077694239" y="442.5" />
+      <point x="92.72431077694239" y="211.5" />
+      <point x="-265.0" y="-0.0" />
+    </edge>
+    <edge source="SortByUser" target="java.util.Comparator">
+      <point x="-46.5" y="-24.0" />
+      <point x="533.6190476190476" y="472.5" />
+      <point x="483.7243107769424" y="472.5" />
+      <point x="106.0" y="211.0" />
+    </edge>
+    <edge source="SortByText" target="Tweets">
+      <point x="46.5" y="-24.0" />
+      <point x="832.6190476190476" y="492.5" />
+      <point x="827.312447786132" y="492.5" />
+      <point x="-25.14285714285711" y="211.5" />
+    </edge>
+    <edge source="SortByText" target="java.util.Comparator">
+      <point x="-46.5" y="-24.0" />
+      <point x="739.6190476190476" y="472.5" />
+      <point x="589.7243107769424" y="472.5" />
+      <point x="212.0" y="211.0" />
+    </edge>
+    <edge source="TextMining" target="CountComparator">
+      <point x="-223.11111111111103" y="-134.5" />
+      <point x="605.5079365079366" y="1292.5" />
+      <point x="92.0" y="1292.5" />
+      <point x="0.0" y="24.0" />
+    </edge>
+    <edge source="BaseDeTweets" target="SortByUser">
+      <point x="-34.0" y="-101.5" />
+      <point x="732.7053049289891" y="867.5" />
+      <point x="580.1190476190476" y="867.5" />
+      <point x="0.0" y="24.0" />
+    </edge>
+    <edge source="CountComparator" target="java.util.Comparator">
+      <point x="-46.0" y="-24.0" />
+      <point x="46.0" y="492.5" />
+      <point x="271.7243107769424" y="492.5" />
+      <point x="-106.0" y="211.0" />
+    </edge>
+    <edge source="BaseDeTweets" target="SortByText">
+      <point x="0.0" y="-101.5" />
+      <point x="766.7053049289891" y="877.5" />
+      <point x="786.1190476190476" y="877.5" />
+      <point x="0.0" y="24.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.37900552486187866" x="938.1640673075947" y="740.959116419677" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Methods</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

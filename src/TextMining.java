@@ -8,7 +8,8 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -32,18 +33,6 @@ public class TextMining extends Application {
 
         Application.launch(TextMining.class, args);
     }
-
-    public static List<String> stock (BufferedReader br) throws IOException {
-        List<String> lstStr = new ArrayList<String>();
-        String str;
-        while (( str = br.readLine()) != null) {
-            lstStr.add(str);
-        }
-        return lstStr;
-    }
-
-
-
 
     /**
      * The main entry point for all JavaFX applications.
@@ -77,24 +66,21 @@ public class TextMining extends Application {
 
         //Liste des lignes
         List<String> lstStrLignes = stock(tampon);
-        for(int i = 0; i<lstStrLignes.size();i++)
-        {
+        for (int i = 0; i < lstStrLignes.size(); i++) {
             //System.out.println(i);
             Tweets t = new Tweets(lstStrLignes.get(i));
             bdt.ajoute(t);
         }
-        bdt.trierParText();
 
-        //Collections.sort(bdt.getTweets(), new SortByRt());
+        bdt.trierParText();
+        bdt.compteurRT();
 
         //Creation du tableau de données
-        TableView<Tweets> table = new TableView<>();
-        final ObservableList<Tweets> data =
-                FXCollections.observableArrayList(bdt.getTweets());
+        TableView<Tweets> tableView = new TableView<>();
 
         final Label label = new Label("Tweets");
         label.setFont(new Font("Arial", 20));
-        table.setEditable(true);
+        tableView.setEditable(true);
 
 
         TableColumn userCol = new TableColumn("Utilisateur");
@@ -125,134 +111,253 @@ public class TextMining extends Application {
         textCol.setCellValueFactory(
                 new PropertyValueFactory<Tweets, String>("strText"));
 
+        final ObservableList<Tweets>[] data = new ObservableList[]{FXCollections.observableArrayList(bdt.getTweets())};
 
-        FilteredList<Tweets> flTweets= new FilteredList(data, p -> true);//Pass the data to a filtered list
-        SortedList<Tweets> sortedTweets = new SortedList<>(flTweets);
-        sortedTweets.comparatorProperty().bind(table.comparatorProperty());
+        final FilteredList<Tweets>[] flTweets = new FilteredList[]{new FilteredList(data[0], p -> true)};//Pass the data to a filtered list
+        tableView.setItems(flTweets[0]);//Set the table's items using the filtered list
 
-        table.setItems(sortedTweets);//Set the table's items using the filtered list
-
-        table.getColumns().addAll(userCol, dateCol, rtCol, brtCol, userRTCol, timeCol, textCol);
-
+        tableView.getColumns().addAll(userCol, dateCol, rtCol, brtCol, userRTCol, timeCol, textCol);
 
         //Adding ChoiceBox and TextField here!
         ChoiceBox<String> choiceBox = new ChoiceBox();
-        choiceBox.getItems().addAll("Utilisateur", "Contenu du tweet");
-        choiceBox.setValue("Utilisateur");
         TextField textField = new javafx.scene.control.TextField();
-        textField.setPromptText("Search here!");
-        textField.setOnKeyReleased(keyEvent ->
-        {
-            switch (choiceBox.getValue())//Switch on choiceBox value
-            {
-                case "Utilisateur":
-                    flTweets.setPredicate(p -> p.getStrUtilisateur().toLowerCase().contains(textField.getText().toLowerCase().trim()));
-
-                    break;
-                case "Contenu du tweet":
-                    flTweets.setPredicate(p -> p.getStrText().toLowerCase().contains(textField.getText().toLowerCase().trim()));
-
-                    break;
-            }
-        });
+        createSearchBar(choiceBox, textField, flTweets);
 
         Label allLabel = new Label();
-        allLabel.textProperty().bind(Bindings.size(table.getItems()).asString("All items: %s"));
-
-
-        primaryStage.setTitle("TextMining");
-
-        HBox hBox = new HBox(choiceBox, textField);
-        VBox root = new  VBox();
-
-        root.setSpacing(10);
-        root.setPadding(new Insets(15,20, 10,10));
-
-        Scene scene = new Scene(root, 1000, 700, Color.WHITE);
-
-
-
+        allLabel.textProperty().bind(Bindings.size(tableView.getItems()).asString("Nombre d'items: %s"));
 
         List<String> lstStrWords = new ArrayList<>();
 
         List<String> textTweets = new ArrayList<>();
-        for(Tweets t: bdt.getTweets())
-        {
+        for (Tweets t : bdt.getTweets()) {
             textTweets.add(t.getStrText());
         }
 
 
-        System.out.println("ProgressBar Spliting Tweets :");
-        double pourcentage = 0;
-        for(Tweets t: bdt.getTweets())
-        {
-            double it =  bdt.getTweets().indexOf(t) +1 ;
-            if (pourcentage != Math.round((it / bdt.getTweets().size()) * 100))
-            {
-                pourcentage = Math.round((it / bdt.getTweets().size()) * 100);
-                String progress = new String(pourcentage+"% ");
-                System.out.print(progress);
+        Button buttonFreqWords = new Button("Afficher les mots les plus frequents");
+        buttonFreqWords.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+
+                frequencyWords(lstStrWords, lstSW);
             }
+        });
 
-            String[] twords = t.getStrText().replaceAll("[^A-Za-z]+", " ").split(" ");
-            for(String s : twords)
-            {
-                if (s.length() > 1) {
-                    lstStrWords.add(s.toLowerCase());
-                }
+        Button buttonTFIDF = new Button("Afficher toutes les Infos des différents mots");
+        buttonTFIDF.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                tfidf();
             }
-        }
+        });
 
 
-        //lowerCase(lstWords);
-        lstStrWords.removeAll(lstSW);
-        Set<String> uniqueWords = new TreeSet<>(lstStrWords);
+        Button buttonSortByUser = new Button("Trier par utilisateurs");
+        buttonSortByUser.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                bdt.trierParUser();
+                importBase(data, flTweets, tableView);
+                createSearchBar(choiceBox, textField, flTweets);
+            }
+        });
 
-        List<Words> infoWords = new ArrayList<>();
+        Button buttonSortByRT = new Button("Trier par RT");
+        buttonSortByRT.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                bdt.trierParRT();
+                importBase(data, flTweets, tableView);
+                createSearchBar(choiceBox, textField, flTweets);
+            }
+        });
 
-        Map<String, Integer> frequencyWords = countFrequencies(lstStrWords);
+        Button buttonSortbyText = new Button("Trier par Text");
+        buttonSortbyText.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                bdt.trierParText();
+                importBase(data, flTweets, tableView);
+                createSearchBar(choiceBox, textField, flTweets);
+            }
+        });
 
-        for (Map.Entry me : frequencyWords.entrySet())
-        {
-            infoWords.add(new Words(me.getKey().toString(),(Integer)me.getValue(),0,0,0));
+        primaryStage.setTitle("TextMining");
 
-        }
+        VBox root = new VBox();
 
-        Collections.sort(infoWords, new CountComparator());
+        root.setSpacing(10);
+        root.setPadding(new Insets(15, 20, 10, 10));
 
-        System.out.println("\n");
-        for (int i = 0; i<=10;i++)
-        {
-            System.out.println(infoWords.get(i).getText()+" " + infoWords.get(i).getCount());
-        }
+        HBox hBox = new HBox(choiceBox, textField);
 
-        table.prefHeightProperty().bind(primaryStage.heightProperty());
-        table.prefWidthProperty().bind(primaryStage.widthProperty());
-        root.getChildren().addAll(label,table, hBox, allLabel);
+        tableView.prefHeightProperty().bind(primaryStage.heightProperty());
+        tableView.prefWidthProperty().bind(primaryStage.widthProperty());
+
+        HBox hBox1 = new HBox(buttonSortByRT, buttonSortbyText, buttonSortByUser);
+
+        root.getChildren().addAll(label, tableView, hBox, allLabel, hBox1, buttonFreqWords,buttonTFIDF);
+
+        Scene scene = new Scene(root, 1000, 700, Color.WHITE);
         primaryStage.setScene(scene);
 
         primaryStage.show();
     }
 
-    public static void lowerCase(List<String> strings)
-    {
-        ListIterator<String> iterator = strings.listIterator();
-        while (iterator.hasNext())
+    public static void tfidf() {
+        List<Words> infoWords = new ArrayList<>();
+        int globalneg = 0;
+        int n = 0;
+        double pourcentage = 0;
+        System.out.println("ProgressBar Spliting Tweets :");
+        for (Tweets t : bdt.getTweets()) {
+            double it = bdt.getTweets().indexOf(t) + 1;
+            if (pourcentage != Math.round((it / bdt.getTweets().size()) * 100)) {
+                pourcentage = Math.round((it / bdt.getTweets().size()) * 100);
+                String progress = new String(pourcentage + "% ");
+                System.out.print(progress);
+            }
+
+            if (!t.getbRT()) {
+                String[] arrTWords = t.getStrText().replaceAll("[^A-Za-z]+", " ").split(" ");
+                List<String> lstTWords = Arrays.asList(arrTWords);
+                lowerCase(lstTWords);
+                Map<String, Integer> frequencyTWords = countFrequencies(lstTWords);
+                for (Map.Entry me : frequencyTWords.entrySet()) {
+                    String s = new String(me.getKey().toString());
+                    if (s.length() > 1) {
+                        Optional<Words> optional = infoWords.stream()
+                                .filter(x -> s.equals(x.getText()))
+                                .findFirst();
+                        double c = (Integer) me.getValue();
+                        double tf = c / (lstTWords.size());
+                        tf = (double) Math.round(tf * 10000d) / 10000d;
+                        if (!optional.isPresent()) {//Check whether optional has element you are looking for
+                            Words w = new Words(s, (Integer) me.getValue());
+                            w.addTF(tf);
+                            infoWords.add(w);
+                        } else {
+                            optional.get().setCount(optional.get().getCount() + (Integer) me.getValue());
+                            optional.get().addTF(tf);
+                        }
+                        n += (Integer) me.getValue();
+                    }
+
+                }
+            }
+        }
+
+        for (Words w : infoWords) {
+            w.setIdf(w.getCount(), n);
+            for (double d : w.getTf())
+            {
+                w.getTfidf().add(d* w.getIdf());
+            }
+        }
+
+        Collections.sort(infoWords, new CountComparator());
+
+        System.out.println("\n");
+        for (int i = 0; i <= 10; i++) {
+            System.out.println(infoWords.get(i).getText() +
+                    " " + infoWords.get(i).getCount()+
+                    " " + infoWords.get(i).getIdf()
+                    );
+        }
+    }
+
+
+    public static void frequencyWords(List<String> lstStrWords, List<String> lstSW) {
+        List<Words> infoWords = new ArrayList<>();
+        System.out.println("ProgressBar Spliting Tweets :");
+        double pourcentage = 0;
+        for (Tweets t : bdt.getTweets()) {
+            double it = bdt.getTweets().indexOf(t) + 1;
+            if (pourcentage != Math.round((it / bdt.getTweets().size()) * 100)) {
+                pourcentage = Math.round((it / bdt.getTweets().size()) * 100);
+                String progress = new String(pourcentage + "% ");
+                System.out.print(progress);
+            }
+
+            if (!t.getbRT()) {
+                String[] arrTWords = t.getStrText().replaceAll("[^A-Za-z]+", " ").split(" ");
+                for (String s : arrTWords) {
+                    if (s.length() > 1) {
+                        lstStrWords.add(s.toLowerCase());
+                    }
+                }
+            }
+        }
+        lstStrWords.removeAll(lstSW);
+        Map<String, Integer> frequencyWords = countFrequencies(lstStrWords);
+        for (Map.Entry me : frequencyWords.entrySet()) {
+            Words w = new Words(me.getKey().toString(), (Integer) me.getValue());
+            //w.setIdf(w.getCount(), textTweets.size());
+            infoWords.add(w);
+        }
+
+        Collections.sort(infoWords, new CountComparator());
+
+        System.out.println("\n");
+        for (int i = 0; i <= 10; i++) {
+            System.out.println(infoWords.get(i).getText() +
+                    " " + infoWords.get(i).getCount());
+        }
+    }
+
+    public static void importBase(ObservableList<Tweets>[] data, FilteredList<Tweets>[] flTweets, TableView<Tweets> tableView) {
+        data[0] = FXCollections.observableArrayList(bdt.getTweets());
+        flTweets[0] = new FilteredList(data[0], p -> true);//Pass the data to a filtered list
+        tableView.setItems(flTweets[0]);//Set the table's items using the filtered list
+
+
+    }
+
+    public static void createSearchBar(ChoiceBox<String> choiceBox, TextField textField, FilteredList<Tweets>[] flTweets) {
+        choiceBox.getItems().addAll("Utilisateur", "Contenu du tweet");
+        choiceBox.setValue("Utilisateur");
+        textField.setPromptText("Rechercher ici !");
+        textField.setOnKeyReleased(keyEvent ->
         {
+            switch (choiceBox.getValue())//Switch on choiceBox value
+            {
+                case "Utilisateur":
+                    flTweets[0].setPredicate(p -> p.getStrUtilisateur().toLowerCase().contains(textField.getText().toLowerCase().trim()));
+                    break;
+                case "Contenu du tweet":
+                    flTweets[0].setPredicate(p -> p.getStrText().toLowerCase().contains(textField.getText().toLowerCase().trim()));
+                    break;
+            }
+        });
+
+    }
+
+    public static List<String> stock(BufferedReader br) throws IOException {
+        List<String> lstStr = new ArrayList<String>();
+        String str;
+        while ((str = br.readLine()) != null ) {
+            if(lstStr.size() < 100000) {
+                lstStr.add(str);
+            }
+        }
+
+        return lstStr;
+    }
+
+    public static void lowerCase(List<String> strings) {
+        ListIterator<String> iterator = strings.listIterator();
+        while (iterator.hasNext()) {
             iterator.set(iterator.next().toLowerCase());
         }
     }
 
-    public static int count(List<String> words,String term)
-    {
+    public static int count(List<String> words, String term) {
         int count = 0;
         int idterm = words.indexOf(term);
 
-        for (int i = idterm; term.equalsIgnoreCase(words.get(i));i++)
-        {
+        for (int i = idterm; term.equalsIgnoreCase(words.get(i)); i++) {
             count++;
-            if (i+1 == words.size())
-            {
+            if (i + 1 == words.size()) {
                 break;
             }
         }
@@ -260,8 +365,7 @@ public class TextMining extends Application {
         return count;
     }
 
-    public static Map countFrequencies(List<String> list)
-    {
+    public static Map countFrequencies(List<String> list) {
         // hashmap to store the frequency of element
         Map<String, Integer> hm = new HashMap<String, Integer>();
 
