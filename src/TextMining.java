@@ -120,6 +120,8 @@ public class TextMining extends Application {
 
         //Adding ChoiceBox and TextField here!
         ChoiceBox<String> choiceBox = new ChoiceBox();
+        choiceBox.getItems().addAll("Utilisateur", "Contenu du tweet");
+        choiceBox.setValue("Utilisateur");
         TextField textField = new javafx.scene.control.TextField();
         createSearchBar(choiceBox, textField, flTweets);
 
@@ -143,7 +145,7 @@ public class TextMining extends Application {
             }
         });
 
-        Button buttonTFIDF = new Button("Afficher toutes les Infos des différents mots");
+        Button buttonTFIDF = new Button("Afficher infos (TF-IDF)");
         buttonTFIDF.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -260,8 +262,11 @@ public class TextMining extends Application {
         System.out.println("\n");
         for (int i = 0; i <= 10; i++) {
             System.out.println(infoWords.get(i).getText() +
-                    " " + infoWords.get(i).getCount()+
-                    " " + infoWords.get(i).getIdf()
+                    "\nc : " + infoWords.get(i).getCount()+
+                    "\nidf : " + infoWords.get(i).getIdf()+
+                    "\ntf : " + infoWords.get(i).getTf()+
+                    "\ntf-idf : " + infoWords.get(i).getTfidf()+
+                    "\n"
                     );
         }
     }
@@ -314,8 +319,6 @@ public class TextMining extends Application {
     }
 
     public static void createSearchBar(ChoiceBox<String> choiceBox, TextField textField, FilteredList<Tweets>[] flTweets) {
-        choiceBox.getItems().addAll("Utilisateur", "Contenu du tweet");
-        choiceBox.setValue("Utilisateur");
         textField.setPromptText("Rechercher ici !");
         textField.setOnKeyReleased(keyEvent ->
         {
