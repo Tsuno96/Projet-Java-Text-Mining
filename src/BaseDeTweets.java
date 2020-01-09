@@ -7,7 +7,6 @@ public class BaseDeTweets {
     private List<Tweets> lstTweets;
 
     public BaseDeTweets() {
-        //tmTweets = new TreeMap<Tweets, Integer>();
         lstTweets = new ArrayList<Tweets>();
     }
 
@@ -39,6 +38,7 @@ public class BaseDeTweets {
 
 
     public void compteurRT() {
+        trierParText();
         Tweets t0 = lstTweets.get(0);
         for (int i = 1; i < lstTweets.size(); i++) {
             if (lstTweets.get(i).getStrText().contains(t0.getStrText())) {

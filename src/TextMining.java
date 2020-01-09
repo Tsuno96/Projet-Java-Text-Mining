@@ -329,7 +329,6 @@ public class TextMining extends Application {
                     break;
             }
         });
-
     }
 
     public static List<String> stock(BufferedReader br) throws IOException {

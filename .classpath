@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/opencloud-0.3"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/analyzers-common"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/lucene-analyzers-common-8.4.0"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/lucene-misc-8.4.0"/>
+	<classpathentry kind="output" path="out/production/Projet Java Text-Mining"/>
+</classpath>
